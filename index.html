@@ -1,23 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Book an appointment</title>
+<title>Termin buchen</title>
 <style>
   :root{
     --bg:#FAFAF7;
     --panel:#FFFFFF;
-    --border:#E4E1D9;
-    --border-strong:#D2CEC2;
-    --ink:#1D1C19;
-    --ink-muted:#6B6862;
-    --ink-faint:#A8A498;
-    --accent:#1F4B44;
-    --accent-soft:#E7EFEC;
+    --border:#E7E6EF;
+    --border-strong:#D6D4E4;
+    --ink:#12162B;
+    --ink-muted:#6B6B78;
+    --ink-faint:#B4B3C2;
+    --accent:#5B67F1;
+    --accent-soft:#EDEFFD;
+    --accent-hover:#E1E4FC;
     --accent-contrast:#FFFFFF;
+    --navy:#12162B;
     --danger:#B3261E;
-    --radius:10px;
+    --radius:14px;
     --font-display:'Space Grotesk','Inter',sans-serif;
     --font-body:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
   }
@@ -30,76 +32,62 @@
     -webkit-font-smoothing:antialiased;
   }
   #app{
-    max-width:1000px;
+    max-width:900px;
     margin:0 auto;
     padding:24px 20px 60px;
   }
-  .layout{
-    display:grid;
-    grid-template-columns:280px 1fr 220px;
+  .card{
+    position:relative;
     border:1px solid var(--border);
     border-radius:var(--radius);
     background:var(--panel);
+    box-shadow:0 1px 3px rgba(18,22,43,0.06), 0 12px 32px rgba(18,22,43,0.05);
     overflow:hidden;
-    min-height:520px;
-  }
-  @media (max-width:820px){
-    .layout{grid-template-columns:1fr;}
-    .info-col{border-bottom:1px solid var(--border);}
-    .calendar-col{border-bottom:1px solid var(--border);}
   }
 
-  /* left info column */
-  .info-col{
-    padding:28px 24px;
-    border-right:1px solid var(--border);
+  /* header */
+  .card-header{
     display:flex;
-    flex-direction:column;
+    align-items:flex-start;
+    justify-content:space-between;
+    padding:22px 24px 0;
   }
-  .service-label{
-    font-size:12px;
-    letter-spacing:0.06em;
-    text-transform:uppercase;
-    color:var(--ink-faint);
-    margin-bottom:6px;
-  }
-  .service-name{
+  .card-title{
     font-family:var(--font-display);
-    font-size:22px;
+    font-size:20px;
     font-weight:500;
-    margin:0 0 14px;
-    line-height:1.25;
+    margin:0;
   }
-  .duration{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
+  .card-subtitle{
     font-size:13px;
     color:var(--ink-muted);
-    margin-bottom:18px;
+    margin:4px 0 0;
   }
-  .duration svg{width:14px;height:14px;stroke:var(--ink-muted);}
-  .customer-card{
-    background:var(--accent-soft);
+  .close-btn{
+    width:30px;height:30px;
+    border:none;
+    background:transparent;
     border-radius:8px;
-    padding:14px 16px;
-    font-size:13px;
-    color:var(--accent);
-    margin-top:auto;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink-muted);
   }
-  .customer-card .label{
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:0.05em;
-    opacity:0.75;
-    margin-bottom:2px;
-  }
-  .customer-card .name{font-weight:600;font-size:14px;}
+  .close-btn:hover{background:var(--bg);color:var(--ink);}
 
-  /* calendar column */
-  .calendar-col{
-    padding:24px;
-    border-right:1px solid var(--border);
+  /* main grid */
+  .main-grid{
+    display:grid;
+    grid-template-columns:1fr 300px;
+    gap:0;
+    padding:18px 24px 8px;
+  }
+  @media (max-width:640px){
+    .main-grid{grid-template-columns:1fr;}
+  }
+
+  .calendar-col{padding-right:24px;}
+  @media (max-width:640px){
+    .calendar-col{padding-right:0;border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:16px;}
   }
   .cal-header{
     display:flex;
@@ -109,18 +97,19 @@
   }
   .cal-month{
     font-family:var(--font-display);
-    font-size:17px;
+    font-size:16px;
     font-weight:500;
   }
   .cal-nav{display:flex;gap:4px;}
   .cal-nav button{
-    width:28px;height:28px;
+    width:30px;height:30px;
     border:1px solid var(--border);
     background:var(--panel);
-    border-radius:6px;
+    border-radius:8px;
     cursor:pointer;
     display:flex;align-items:center;justify-content:center;
     color:var(--ink);
+    font-size:15px;
   }
   .cal-nav button:hover{border-color:var(--border-strong);}
   .cal-nav button:disabled{opacity:0.35;cursor:default;}
@@ -128,17 +117,16 @@
     display:grid;
     grid-template-columns:repeat(7,1fr);
     text-align:center;
-    font-size:11px;
-    color:var(--ink-faint);
-    text-transform:uppercase;
-    letter-spacing:0.04em;
-    margin-bottom:8px;
+    font-size:12px;
+    font-weight:500;
+    color:var(--ink-muted);
+    margin-bottom:6px;
   }
   .weekdays div{padding:4px 0;}
   .days{
     display:grid;
     grid-template-columns:repeat(7,1fr);
-    gap:4px;
+    gap:2px;
   }
   .day{
     aspect-ratio:1;
@@ -146,76 +134,138 @@
     align-items:center;
     justify-content:center;
     border-radius:50%;
-    font-size:13px;
+    font-size:14px;
     cursor:default;
     color:var(--ink-faint);
-    position:relative;
+    margin:2px;
   }
-  .day.in-month{color:var(--ink);}
+  .day.in-month{color:var(--ink-muted);}
   .day.has-slots{
     color:var(--accent);
     font-weight:600;
     cursor:pointer;
+    background:var(--accent-soft);
   }
-  .day.has-slots:hover{background:var(--accent-soft);}
+  .day.has-slots:hover{background:var(--accent-hover);}
   .day.selected{
-    background:var(--accent);
-    color:var(--accent-contrast);
+    background:var(--navy);
+    color:#FFFFFF;
   }
-  .day.today.in-month:not(.selected){text-decoration:underline;text-underline-offset:3px;}
+  .day.selected:hover{background:var(--navy);}
 
-  .cal-loading, .cal-empty{
+  .cal-loading{
     font-size:13px;
     color:var(--ink-muted);
     padding:16px 0;
   }
+  .tz-row{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    color:var(--ink-muted);
+    margin-top:14px;
+  }
+  .tz-row svg{width:14px;height:14px;stroke:var(--ink-muted);}
 
-  /* slots column */
+  /* time slot column */
   .slots-col{
-    padding:24px 18px;
     display:flex;
     flex-direction:column;
-    gap:8px;
-    max-height:560px;
+    gap:10px;
+    max-height:420px;
     overflow-y:auto;
+    padding:2px 2px 2px 20px;
+    border-left:1px solid var(--border);
   }
-  .slots-col-heading{
-    font-size:13px;
-    font-weight:600;
-    color:var(--ink-muted);
-    margin-bottom:4px;
+  @media (max-width:640px){
+    .slots-col{border-left:none;padding-left:2px;}
   }
-  .slot-btn{
+  .slot-card{
     border:1px solid var(--border);
     background:var(--panel);
-    border-radius:8px;
-    padding:10px 12px;
-    font-size:14px;
-    font-family:var(--font-body);
-    color:var(--ink);
-    cursor:pointer;
+    border-radius:10px;
+    padding:12px 16px;
     text-align:center;
-    transition:border-color .12s;
+    cursor:pointer;
+    transition:border-color .12s, background .12s;
   }
-  .slot-btn:hover{border-color:var(--accent);color:var(--accent);}
-  .slot-btn.selected{background:var(--accent);border-color:var(--accent);color:var(--accent-contrast);}
-  .no-slots-msg{font-size:13px;color:var(--ink-faint);}
+  .slot-card:hover{border-color:var(--accent);}
+  .slot-card .slot-main{
+    font-size:15px;
+    font-weight:600;
+    color:var(--accent);
+  }
+  .slot-card .slot-sub{
+    font-size:12px;
+    color:var(--ink-muted);
+    margin-top:2px;
+  }
+  .slot-card.selected{
+    background:var(--accent);
+    border-color:var(--accent);
+  }
+  .slot-card.selected .slot-main{color:#FFFFFF;}
+  .slot-card.selected .slot-sub{color:rgba(255,255,255,0.8);}
+  .no-slots-msg{font-size:13px;color:var(--ink-faint);padding:8px 2px;}
 
-  /* confirm / status states */
+  /* footer bar */
+  .footer-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:16px 24px;
+    border-top:1px solid var(--border);
+    margin-top:14px;
+  }
+  .footer-summary{
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .footer-summary.empty{color:var(--ink-faint);font-weight:400;}
+  .footer-actions{display:flex;gap:10px;}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    justify-content:center;
+    padding:10px 18px;
+    border-radius:9px;
+    border:1px solid transparent;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    font-family:var(--font-body);
+  }
+  .btn-primary{
+    background:var(--navy);
+    color:#FFFFFF;
+  }
+  .btn-primary:disabled{
+    background:var(--ink-faint);
+    cursor:not-allowed;
+  }
+  .btn-secondary{
+    background:transparent;
+    color:var(--ink);
+    border-color:var(--border-strong);
+  }
+  .btn-secondary:hover{border-color:var(--ink-muted);}
+
+  /* status overlay (loading / success / error) */
   .overlay{
     position:absolute;inset:0;
-    background:rgba(250,250,247,0.94);
+    background:rgba(250,250,247,0.96);
     display:flex;align-items:center;justify-content:center;
     padding:24px;
+    z-index:5;
   }
-  .layout{position:relative;}
-  .status-card{
-    max-width:360px;
-    text-align:center;
-  }
+  .status-card{max-width:340px;text-align:center;}
   .status-card h2{
     font-family:var(--font-display);
-    font-size:19px;
+    font-size:18px;
     font-weight:500;
     margin:14px 0 6px;
   }
@@ -233,26 +283,6 @@
   }
   .icon-circle.success{background:var(--accent-soft);color:var(--accent);}
   .icon-circle.error{background:#FBEAE9;color:var(--danger);}
-  .btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    padding:9px 18px;
-    border-radius:8px;
-    border:1px solid var(--accent);
-    background:var(--accent);
-    color:var(--accent-contrast);
-    font-size:14px;
-    font-weight:500;
-    cursor:pointer;
-    font-family:var(--font-body);
-  }
-  .btn.secondary{
-    background:transparent;
-    color:var(--ink);
-    border-color:var(--border-strong);
-  }
-  .btn-row{display:flex;gap:10px;justify-content:center;}
   .spinner{
     width:22px;height:22px;
     border:2.5px solid var(--border);
@@ -262,51 +292,57 @@
     margin:0 auto;
   }
   @keyframes spin{to{transform:rotate(360deg);}}
-
-  .footer-note{
-    text-align:center;
-    font-size:11px;
-    color:var(--ink-faint);
-    margin-top:14px;
-  }
 </style>
 </head>
 <body>
 
 <div id="app">
-  <div class="layout" id="layout">
+  <div class="card" id="card">
 
-    <div class="info-col">
-      <div class="service-label">Appointment</div>
-      <h1 class="service-name" id="serviceName">Book a consultation</h1>
-      <div class="duration">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-        <span id="durationLabel">30 min</span>
+    <div class="card-header">
+      <div>
+        <h1 class="card-title">Datum &amp; Uhrzeit wählen</h1>
+        <p class="card-subtitle" id="cardSubtitle"></p>
       </div>
-      <div class="customer-card" id="customerCard" style="display:none;">
-        <div class="label">Booking for</div>
-        <div class="name" id="customerName"></div>
-      </div>
+      <button class="close-btn" id="closeBtn" aria-label="Schließen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
     </div>
 
-    <div class="calendar-col">
-      <div class="cal-header">
-        <div class="cal-month" id="calMonth"></div>
-        <div class="cal-nav">
-          <button id="prevMonth" aria-label="Previous month">‹</button>
-          <button id="nextMonth" aria-label="Next month">›</button>
+    <div class="main-grid">
+      <div class="calendar-col">
+        <div class="cal-header">
+          <div class="cal-month" id="calMonth"></div>
+          <div class="cal-nav">
+            <button id="prevMonth" aria-label="Vorheriger Monat">‹</button>
+            <button id="nextMonth" aria-label="Nächster Monat">›</button>
+          </div>
+        </div>
+        <div class="weekdays">
+          <div>Mo</div><div>Di</div><div>Mi</div><div>Do</div><div>Fr</div><div>Sa</div><div>So</div>
+        </div>
+        <div class="days" id="daysGrid"></div>
+        <div class="cal-loading" id="calLoading">Verfügbarkeit wird geladen…</div>
+        <div class="tz-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.5 6 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-6-3.5-9s1-6.5 3.5-9z"/></svg>
+          <span>Mitteleuropäische Zeit (MEZ)</span>
         </div>
       </div>
-      <div class="weekdays">
-        <div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div><div>Su</div>
+
+      <div class="slots-col" id="slotsCol">
+        <div id="slotsList"></div>
       </div>
-      <div class="days" id="daysGrid"></div>
-      <div class="cal-loading" id="calLoading">Loading availability…</div>
     </div>
 
-    <div class="slots-col" id="slotsCol">
-      <div class="slots-col-heading" id="slotsHeading">Select a date</div>
-      <div id="slotsList"></div>
+    <div class="footer-bar">
+      <div class="footer-summary empty" id="footerSummary">Noch keine Auswahl</div>
+      <div class="footer-actions">
+        <button class="btn btn-secondary" id="cancelSelectionBtn">Abbrechen</button>
+        <button class="btn btn-primary" id="confirmBtn" disabled>
+          Termin bestätigen
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </div>
     </div>
 
   </div>
@@ -319,8 +355,8 @@
 const CONFIG = {
   GET_SLOTS_URL: "https://hook.eu1.make.celonis.com/s7kd580bgkyxtq7hgk3aj9hjygxjicoi",
   BOOK_SLOT_URL: "https://hook.eu1.make.celonis.com/ro24vhas3durfjywni3vgaxhv96grbk5",
-  SERVICE_NAME: "Book a consultation",
-  DURATION_LABEL: "30 min",
+  SERVICE_NAME: "Beratungstermin",
+  DURATION_LABEL: "30 Min.",
   DEFAULT_RANGE: 14   // fallback search radius (km) if not passed in the URL
 };
 
@@ -361,12 +397,13 @@ const customer = {
 };
 const useMock = params.get("mock") === "1";
 
-document.getElementById("serviceName").textContent = CONFIG.SERVICE_NAME;
-document.getElementById("durationLabel").textContent = CONFIG.DURATION_LABEL;
-if (customer.name) {
-  document.getElementById("customerCard").style.display = "block";
-  document.getElementById("customerName").textContent = customer.name;
-}
+const subtitleParts = [CONFIG.SERVICE_NAME];
+if (customer.name) subtitleParts.push("für " + customer.name);
+document.getElementById("cardSubtitle").textContent = subtitleParts.join(" · ");
+
+document.getElementById("closeBtn").addEventListener("click", () => {
+  window.parent.postMessage({ type: "close_booking_widget" }, "*");
+});
 
 /* ---------------------------------------------------------------
    State
@@ -378,6 +415,7 @@ let selectedDateKey = null;
 let selectedSlot = null;
 
 const dayKey = d => d.toISOString().slice(0,10);
+const pad2 = n => String(n).padStart(2, "0");
 
 /* ---------------------------------------------------------------
    Fetch available slots
@@ -425,18 +463,28 @@ async function loadSlots(){
       const winStart = new Date(s.startTimeWindow);
       const winEnd = new Date(s.endTimeWindow);
       const key = dayKey(winStart);
-      const label = winStart.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-        + " – " + winEnd.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      (slotsByDate[key] ||= []).push({ ...s, label });
+      const mainLabel = pad2(winStart.getHours()) + ":" + pad2(winStart.getMinutes()) + " Uhr";
+      const subLabel = pad2(winStart.getHours()) + ":" + pad2(winStart.getMinutes())
+        + " – " + pad2(winEnd.getHours()) + ":" + pad2(winEnd.getMinutes());
+      (slotsByDate[key] ||= []).push({ ...s, mainLabel, subLabel });
     });
     Object.values(slotsByDate).forEach(list => list.sort((a,b) => new Date(a.startTimeWindow) - new Date(b.startTimeWindow)));
   } catch(err){
     console.error(err);
-    document.getElementById("calLoading").textContent = "Couldn't load availability. Please refresh.";
+    document.getElementById("calLoading").textContent = "Verfügbarkeit konnte nicht geladen werden. Bitte Seite neu laden.";
     return;
   }
   document.getElementById("calLoading").style.display = "none";
-  renderCalendar();
+
+  const sortedKeys = Object.keys(slotsByDate).sort();
+  if (sortedKeys.length > 0 && !selectedDateKey) {
+    const firstKey = sortedKeys[0];
+    viewMonth = new Date(firstKey + "T00:00:00");
+    viewMonth.setDate(1);
+    selectDate(firstKey);
+  } else {
+    renderCalendar();
+  }
 }
 
 function mockSuggestions(){
@@ -447,9 +495,9 @@ function mockSuggestions(){
     const d = new Date(base);
     d.setDate(base.getDate()+i);
     if (d.getDay()===0 || d.getDay()===6) continue;
-    [9,10.5,13,15.5].forEach(h=>{
-      const start = new Date(d); start.setHours(Math.floor(h), (h%1)*60, 0, 0);
-      const end = new Date(start); end.setMinutes(end.getMinutes()+30);
+    [8,10,11].forEach(h=>{
+      const start = new Date(d); start.setHours(h, 0, 0, 0);
+      const end = new Date(start); end.setHours(end.getHours()+1);
       out.push({
         teamId: "team_mock",
         startDate: start.toISOString(),
@@ -469,14 +517,12 @@ function renderCalendar(){
   const grid = document.getElementById("daysGrid");
   grid.innerHTML = "";
   document.getElementById("calMonth").textContent =
-    viewMonth.toLocaleDateString([], { month: "long", year: "numeric" });
+    viewMonth.toLocaleDateString("de-DE", { month: "long", year: "numeric" });
 
   const firstOfMonth = new Date(viewMonth);
   const startOffset = (firstOfMonth.getDay() + 6) % 7; // Monday = 0
   const gridStart = new Date(firstOfMonth);
   gridStart.setDate(gridStart.getDate() - startOffset);
-
-  const todayKey = dayKey(new Date());
 
   for (let i=0;i<42;i++){
     const d = new Date(gridStart);
@@ -487,7 +533,7 @@ function renderCalendar(){
 
     const cell = document.createElement("div");
     cell.className = "day" + (inMonth ? " in-month" : "") + (hasSlots ? " has-slots" : "") +
-      (key === todayKey ? " today" : "") + (key === selectedDateKey ? " selected" : "");
+      (key === selectedDateKey ? " selected" : "");
     cell.textContent = d.getDate();
     if (hasSlots){
       cell.addEventListener("click", () => selectDate(key));
@@ -505,71 +551,70 @@ function selectDate(key){
   selectedSlot = null;
   renderCalendar();
   renderSlots();
+  renderFooter();
 }
 
 function renderSlots(){
-  const heading = document.getElementById("slotsHeading");
   const list = document.getElementById("slotsList");
   list.innerHTML = "";
-
-  if (!selectedDateKey){
-    heading.textContent = "Select a date";
-    return;
-  }
-  const dateObj = new Date(selectedDateKey + "T00:00:00");
-  heading.textContent = dateObj.toLocaleDateString([], { weekday: "long", month: "short", day: "numeric" });
+  if (!selectedDateKey) return;
 
   const slots = slotsByDate[selectedDateKey] || [];
   if (slots.length === 0){
     const msg = document.createElement("div");
     msg.className = "no-slots-msg";
-    msg.textContent = "No arrival window available this day.";
+    msg.textContent = "An diesem Tag ist kein Zeitfenster verfügbar.";
     list.appendChild(msg);
     return;
   }
-  const hint = document.createElement("div");
-  hint.className = "no-slots-msg";
-  hint.style.marginBottom = "4px";
-  hint.textContent = slots.length === 1
-    ? "One arrival window available:"
-    : "Choose an arrival window:";
-  list.appendChild(hint);
   slots.forEach(slot => {
-    const btn = document.createElement("button");
-    btn.className = "slot-btn";
-    btn.textContent = slot.label;
-    btn.addEventListener("click", () => confirmSlot(slot));
-    list.appendChild(btn);
+    const card = document.createElement("div");
+    card.className = "slot-card" + (selectedSlot === slot ? " selected" : "");
+    card.innerHTML = `<div class="slot-main">${slot.mainLabel}</div><div class="slot-sub">${slot.subLabel}</div>`;
+    card.addEventListener("click", () => {
+      selectedSlot = slot;
+      renderSlots();
+      renderFooter();
+    });
+    list.appendChild(card);
   });
 }
+
+function renderFooter(){
+  const summary = document.getElementById("footerSummary");
+  const confirmBtn = document.getElementById("confirmBtn");
+  if (!selectedSlot){
+    summary.textContent = "Noch keine Auswahl";
+    summary.classList.add("empty");
+    confirmBtn.disabled = true;
+    return;
+  }
+  const d = new Date(selectedSlot.startTimeWindow);
+  const dateStr = pad2(d.getDate()) + "." + pad2(d.getMonth()+1) + "." + String(d.getFullYear()).slice(-2);
+  const timeStr = pad2(d.getHours()) + ":" + pad2(d.getMinutes());
+  summary.textContent = dateStr + ", " + timeStr;
+  summary.classList.remove("empty");
+  confirmBtn.disabled = false;
+}
+
+document.getElementById("cancelSelectionBtn").addEventListener("click", () => {
+  selectedSlot = null;
+  renderSlots();
+  renderFooter();
+});
+
+document.getElementById("confirmBtn").addEventListener("click", () => {
+  if (selectedSlot) bookSlot(selectedSlot);
+});
 
 /* ---------------------------------------------------------------
-   Confirm + book
+   Book
 --------------------------------------------------------------- */
-function confirmSlot(slot){
-  selectedSlot = slot;
-  const dateLabel = new Date(slot.startTimeWindow).toLocaleDateString([], {
-    weekday: "long", month: "long", day: "numeric"
-  });
-  showOverlay(`
-    <div class="status-card">
-      <h2>Confirm this appointment?</h2>
-      <p>${dateLabel}, arrival window ${slot.label}${customer.name ? " — for " + customer.name : ""}</p>
-      <div class="btn-row">
-        <button class="btn secondary" id="cancelBtn">Back</button>
-        <button class="btn" id="confirmBtn">Confirm booking</button>
-      </div>
-    </div>
-  `);
-  document.getElementById("cancelBtn").addEventListener("click", removeOverlay);
-  document.getElementById("confirmBtn").addEventListener("click", () => bookSlot(slot));
-}
-
 async function bookSlot(slot){
   showOverlay(`
     <div class="status-card">
       <div class="spinner"></div>
-      <h2>Booking your appointment…</h2>
+      <h2>Termin wird gebucht…</h2>
     </div>
   `);
   try{
@@ -585,16 +630,15 @@ async function bookSlot(slot){
       ok = res.ok;
       if (!ok) throw new Error("Booking failed (" + res.status + ")");
     }
-    const dateLabel = new Date(slot.startTimeWindow).toLocaleDateString([], {
-      weekday: "long", month: "long", day: "numeric"
-    });
+    const d = new Date(slot.startTimeWindow);
+    const dateLabel = d.toLocaleDateString("de-DE", { weekday: "long", month: "long", day: "numeric" });
     showOverlay(`
       <div class="status-card">
         <div class="icon-circle success">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
         </div>
-        <h2>Appointment booked</h2>
-        <p>${dateLabel}, arrival window ${slot.label}${customer.name ? " — for " + customer.name : ""}</p>
+        <h2>Termin gebucht</h2>
+        <p>${dateLabel}, ${slot.subLabel}${customer.name ? " — für " + customer.name : ""}</p>
       </div>
     `);
     window.parent.postMessage({ type: "appointment_booked", customerId: customer.customerId, slot }, "*");
@@ -605,9 +649,11 @@ async function bookSlot(slot){
         <div class="icon-circle error">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </div>
-        <h2>Couldn't book that slot</h2>
-        <p>It may have just been taken. Please pick another time.</p>
-        <div class="btn-row"><button class="btn" id="retryBtn">Choose another time</button></div>
+        <h2>Termin konnte nicht gebucht werden</h2>
+        <p>Das Zeitfenster wurde möglicherweise gerade vergeben. Bitte ein anderes wählen.</p>
+        <div class="footer-actions" style="justify-content:center;margin-top:6px;">
+          <button class="btn btn-primary" id="retryBtn">Anderes Zeitfenster wählen</button>
+        </div>
       </div>
     `);
     document.getElementById("retryBtn").addEventListener("click", () => { removeOverlay(); loadSlots(); });
@@ -620,7 +666,7 @@ function showOverlay(html){
   overlay.className = "overlay";
   overlay.id = "activeOverlay";
   overlay.innerHTML = html;
-  document.getElementById("layout").appendChild(overlay);
+  document.getElementById("card").appendChild(overlay);
 }
 function removeOverlay(){
   const el = document.getElementById("activeOverlay");
