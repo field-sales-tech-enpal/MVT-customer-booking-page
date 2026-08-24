@@ -604,8 +604,25 @@ document.getElementById("cancelSelectionBtn").addEventListener("click", () => {
 });
 
 document.getElementById("confirmBtn").addEventListener("click", () => {
-  if (selectedSlot) bookSlot(selectedSlot);
+  if (selectedSlot) askFinalConfirmation(selectedSlot);
 });
+
+function askFinalConfirmation(slot){
+  const d = new Date(slot.startTimeWindow);
+  const dateStr = pad2(d.getDate()) + "." + pad2(d.getMonth()+1) + "." + String(d.getFullYear()).slice(-2);
+  showOverlay(`
+    <div class="status-card">
+      <h2>Termin verbindlich buchen?</h2>
+      <p>${dateStr}, ${slot.subLabel}${customer.name ? " — für " + customer.name : ""}</p>
+      <div class="footer-actions" style="justify-content:center;">
+        <button class="btn btn-secondary" id="cancelFinalBtn">Zurück</button>
+        <button class="btn btn-primary" id="confirmFinalBtn">Verbindlich buchen</button>
+      </div>
+    </div>
+  `);
+  document.getElementById("cancelFinalBtn").addEventListener("click", removeOverlay);
+  document.getElementById("confirmFinalBtn").addEventListener("click", () => bookSlot(slot));
+}
 
 /* ---------------------------------------------------------------
    Book
@@ -618,17 +635,27 @@ async function bookSlot(slot){
     </div>
   `);
   try{
-    let ok = true;
+    let confirmationId = null;
     if (useMock) {
       await new Promise(r => setTimeout(r, 900));
+      confirmationId = "mock-12345";
     } else {
       const res = await fetch(CONFIG.BOOK_SLOT_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...customer, teamId: slot.teamId, startDate: slot.startDate, endDate: slot.endDate })
       });
-      ok = res.ok;
-      if (!ok) throw new Error("Booking failed (" + res.status + ")");
+      const raw = await res.json();
+      // Handles both the clean shape { success, confirmationId } from the
+      // Webhook Response module, and Make's raw bundle shape (array of
+      // { data: { success, data: confirmationId } }) as a fallback.
+      const bundle = Array.isArray(raw) ? raw[0] : raw;
+      const inner = bundle?.data && typeof bundle.data === "object" ? bundle.data : bundle;
+      const success = inner?.success;
+      confirmationId = inner?.confirmationId || (typeof inner?.data === "string" ? inner.data : null);
+      if (!res.ok || success === false) {
+        throw new Error("Booking not confirmed" + (inner?.exception ? ": " + inner.exception : ""));
+      }
     }
     const d = new Date(slot.startTimeWindow);
     const dateLabel = d.toLocaleDateString("de-DE", { weekday: "long", month: "long", day: "numeric" });
@@ -639,9 +666,10 @@ async function bookSlot(slot){
         </div>
         <h2>Termin gebucht</h2>
         <p>${dateLabel}, ${slot.subLabel}${customer.name ? " — für " + customer.name : ""}</p>
+        ${confirmationId ? `<p style="margin-top:-10px;font-size:12px;">Bestätigungsnummer: ${confirmationId}</p>` : ""}
       </div>
     `);
-    window.parent.postMessage({ type: "appointment_booked", customerId: customer.customerId, slot }, "*");
+    window.parent.postMessage({ type: "appointment_booked", customerId: customer.customerId, slot, confirmationId }, "*");
   } catch(err){
     console.error(err);
     showOverlay(`
